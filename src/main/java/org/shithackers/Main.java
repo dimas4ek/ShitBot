@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.shithackers.utils.RegisterCommands;
 
 public class Main {
-    private static final String TOKEN = "MTA3Mzk2NzU0NjY2NTAxMzMyOA.GxyV72.Mvi0yFSenOgK1hpTu7VfN7juVv2G9S1aG9XfyI";
+    private static final String TOKEN = "***";
 
     public static void main( String[] args ) {
 
