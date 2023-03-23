@@ -15,7 +15,7 @@ public class BanUserCommand extends ListenerAdapter {
         Guild guild = event.getGuild();
         assert guild != null;
 
-        if(event.getFullCommandName().equals("banuser")) {
+        if(event.getFullCommandName().equals("ban")) {
             User user = event.getOption("user").getAsUser();
             OptionMapping mapping = event.getOption("reason");
             String reason = null;
@@ -24,7 +24,7 @@ public class BanUserCommand extends ListenerAdapter {
             ModerUtils.banUser(guild, user, reason);
             event.reply("User " + user.getAsMention() + " was banned for " + (reason != null ? " for \"" + reason + "\"" : "")).queue();
         }
-        if(event.getFullCommandName().equals("unbanuser")) {
+        if(event.getFullCommandName().equals("unban")) {
             User user = event.getOption("user").getAsUser();
             OptionMapping mapping = event.getOption("reason");
             String reason = null;

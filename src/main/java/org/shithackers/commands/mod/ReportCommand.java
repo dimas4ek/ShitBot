@@ -1,4 +1,4 @@
-package org.shithackers.commands;
+package org.shithackers.commands.mod;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

@@ -1,7 +1,8 @@
 package org.shithackers.commands.info;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -18,7 +19,6 @@ public class UserInfoCommand extends ListenerAdapter
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getFullCommandName().equals("userinfo")) {
-            User user = event.getOption("user").getAsUser();
             List<String> urls = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader("shitImagesURLs.txt"))) {
                 String line;
@@ -28,18 +28,21 @@ public class UserInfoCommand extends ListenerAdapter
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Member member = event.getGuild().getMember(event.getOption("user").getAsUser());
+
             event.replyEmbeds(
                 new EmbedBuilder()
                     .setTitle("User Info")
-                    .addField("User name", user.getAsMention(), true)
-                    .addField("User ID", user.getId(), true)
-                    .addField("User created", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
+                    .addField("User name", member.getAsMention(), false)
+                    .addField("User created", member.getTimeCreated().format(DateTimeFormatter.ofPattern("MMM. dd, yyyy")), true)
+                    .addField("User joined", member.getTimeJoined().format(DateTimeFormatter.ofPattern("MMM. dd, yyyy")), true)
+                    .addField("Roles", member.isOwner() ? "OWNER" : member.hasPermission(Permission.ADMINISTRATOR) ? "ADMIN" : member.hasPermission(Permission.MODERATE_MEMBERS) ? "MODERATOR" : "None", false)
                     .setImage(urls.get(new Random().nextInt(urls.size())))
-                    .setThumbnail(user.getAvatarUrl())
+                    .setThumbnail(member.getEffectiveAvatarUrl())
                     .build()
             ).queue();
+
         }
     }
-
-
 }

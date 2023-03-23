@@ -1,4 +1,4 @@
-package org.shithackers.commands;
+package org.shithackers.commands.other;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -28,11 +28,11 @@ public class PrintQuoteCommand extends ListenerAdapter {
             e.printStackTrace();
         }
 
-        if (event.getFullCommandName().equalsIgnoreCase("quoterandom")) {
+        if (event.getFullCommandName().equalsIgnoreCase("quote random")) {
             event.reply(replies.get(new Random().nextInt(replies.size()))).queue();
         }
 
-        if (event.getFullCommandName().equals("quotestart")) {
+        if (event.getFullCommandName().equals("quote start")) {
             running = true;
             new Thread(() -> {
                 while (running) {
@@ -49,7 +49,7 @@ public class PrintQuoteCommand extends ListenerAdapter {
                     }
                 }
             }).start();
-        } else if (event.getFullCommandName().equalsIgnoreCase("quotestop")) {
+        } else if (event.getFullCommandName().equalsIgnoreCase("quote stop")) {
             event.reply("Stopped").queue();
             running = false;
         }
