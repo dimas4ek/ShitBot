@@ -65,7 +65,7 @@ public class ModerUtils {
                 st.setInt(3, 1);
             }
             st.executeUpdate();
-
+            
             event.reply("User " + user.getAsMention() + " was warned" + (reason != null ? " for \"" + reason + "\"" : "")).queue();
         } catch (SQLException e) {
             throw new RuntimeException(e);
