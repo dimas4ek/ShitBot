@@ -20,7 +20,7 @@ public class LinksListener extends ListenerAdapter {
             OkHttpClient client = new OkHttpClient();
 
             String url = "https://www.virustotal.com/api/v3/urls";
-            String apiKey = "cb5d33034e119e18614b7fb35d364f54850e891944cacf7aa93c9ea56007e5bf";
+            String apiKey = "***";
 
             RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
