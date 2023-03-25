@@ -21,7 +21,7 @@ public class ReportCommand extends ListenerAdapter {
 
         Guild guild = event.getGuild();
 
-        if(event.getFullCommandName().equals("set-moderation-channel")) {
+        if(event.getFullCommandName().equals("channel set moderation")) {
             String channelName = event.getOption("channel").getAsString();
             TextChannel modChannel = guild.getTextChannelsByName(channelName, true).get(0);
             if (modChannel != null) {

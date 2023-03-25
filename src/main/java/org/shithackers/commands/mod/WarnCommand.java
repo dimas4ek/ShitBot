@@ -37,7 +37,7 @@ public class WarnCommand extends ListenerAdapter {
             ModerUtils.warnUser(guild, user, reason, connection, event);
         }
 
-        if(event.getFullCommandName().equals("unwarn")) {
+        if(event.getFullCommandName().equals("warn delete")) {
             User user = event.getOption("user").getAsUser();
             OptionMapping mapping = event.getOption("reason");
             String reason = null;
@@ -46,7 +46,7 @@ public class WarnCommand extends ListenerAdapter {
             ModerUtils.deleteWarn(guild, user, connection, event);
         }
 
-        if (event.getFullCommandName().equals("clearwarns")) {
+        if (event.getFullCommandName().equals("warn clear")) {
             User user = event.getOption("user").getAsUser();
             OptionMapping mapping = event.getOption("reason");
             String reason = null;
@@ -60,7 +60,7 @@ public class WarnCommand extends ListenerAdapter {
             ModerUtils.getWarns(guild, user, connection, event);
         }
 
-        if(event.getFullCommandName().equals("warnlist")) {
+        if(event.getFullCommandName().equals("warn list")) {
             User user = event.getUser();
             ModerUtils.getWarnList(guild, user, connection, event);
         }

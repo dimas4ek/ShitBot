@@ -14,10 +14,7 @@ import org.shithackers.commands.mod.ReportCommand;
 import org.shithackers.commands.mod.WarnCommand;
 import org.shithackers.commands.music.MusicCommand;
 import org.shithackers.commands.other.*;
-import org.shithackers.listeners.LinksListener;
-import org.shithackers.listeners.MemberMusicListener;
-import org.shithackers.listeners.UserJoinLeaveListener;
-import org.shithackers.listeners.MessagesListener;
+import org.shithackers.listeners.*;
 
 public class RegisterCommands {
     public static void register(JDA api) {
@@ -28,7 +25,7 @@ public class RegisterCommands {
             new MuteUserCommand(),
             new WarnCommand(),
             new WelcomeCommand(),
-            new UserJoinLeaveListener(),
+            //new UserJoinLeaveListener(),
             new ReportCommand(),
             new WeatherCommand(),
             new MessagesListener(),
@@ -37,8 +34,9 @@ public class RegisterCommands {
             new MusicCommand(),
             new MemberMusicListener(),
             new TestCommand(),
-            new LinksListener()
-            //new VerifyListener() //в разработке
+            new LinksListener(),
+            //new VerifyListener(),
+            new VerifyCommand()
         );
 
         api.updateCommands().addCommands(
@@ -74,26 +72,45 @@ public class RegisterCommands {
                 .addOption(OptionType.STRING, "reason", "The reason for the unmute", false),
 
             Commands.slash("warn", "Warn a user")
-                .addOption(OptionType.USER, "user", "The user to warn", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the warn", false),
-            Commands.slash("unwarn", "Unwarn a user")
-                .addOption(OptionType.USER, "user", "The user to unwarn", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the unwarn", false),
-            Commands.slash("clearwarns", "Clear all warns of a user")
-                .addOption(OptionType.USER, "user", "The user to clear warns of", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the clear", false),
+                .addOption(OptionType.USER, "user", "Warn a member", true)
+                .addOption(OptionType.STRING, "reason", "The reason for the warn", false)
+                .addSubcommands(
+                    new SubcommandData("delete", "Delete a warn for user")
+                        .addOption(OptionType.USER, "user", "The member", true)
+                        .addOption(OptionType.STRING, "reason", "The reason to delete a warn", false),
+                    new SubcommandData("clean", "Clear all warns for a user")
+                        .addOption(OptionType.USER, "user", "The member", true)
+                        .addOption(OptionType.STRING, "reason", "The reason to clear", false),
+                    new SubcommandData("list", "Get the warns for all members")
+                ),
             Commands.slash("warns", "Get the warns of a user")
-                .addOption(OptionType.USER, "user", "The user to get the warns of", true),
-            Commands.slash("warnlist", "Get the warns of a user"),
+                .addOption(OptionType.USER, "user", "The member", true),
 
-            Commands.slash("set-welcome-channel", "Set the welcome channel")
+            Commands.slash("channel", "create or set the channel")
+                .addSubcommandGroups(new SubcommandGroupData("set", "set the channel")
+                    .addSubcommands(
+                        new SubcommandData("welcome", "welcome channel")
+                            .addOption(OptionType.CHANNEL, "channel", "The channel to set as the welcome channel", true),
+                        new SubcommandData("moderation", "moderation channel")
+                            .addOption(OptionType.CHANNEL, "channel", "The channel to set as the welcome channel", true)
+                    )
+                )
+                .addSubcommandGroups(new SubcommandGroupData("create", "create the channel")
+                    .addSubcommands(new SubcommandData("verify", "The channel to create as verification channel"))
+                ),
+
+           /*Commands.slash("set-welcome-channel", "Set the welcome channel")
                 .addOption(OptionType.CHANNEL, "channel", "The channel to set as the welcome channel", true),
 
             Commands.slash("set-moderation-channel", "Set the moderation channel")
                 .addOption(OptionType.CHANNEL, "channel", "The channel to set as the moderation channel", true),
             Commands.slash("report", "Report a user")
                 .addOption(OptionType.USER, "user", "The user to report", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the report", false),
+                .addOption(OptionType.STRING, "reason", "The reason for the report", false),*/
+
+            /*Commands.slash("create", "Set the verify channel")
+                .addSubcommandGroups(new SubcommandGroupData("channel", "verify")
+                    .addSubcommands(new SubcommandData("verify", "channel"))),*/
 
             Commands.slash("weather", "Get the weather of a city")
                 .addOption(OptionType.STRING, "city", "The city to get the weather of", true),
