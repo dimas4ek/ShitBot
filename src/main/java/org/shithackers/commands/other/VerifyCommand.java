@@ -20,8 +20,27 @@ import java.util.Objects;
 public class VerifyCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.getFullCommandName().equals("delete verify channel")) {
+        if (event.getFullCommandName().equals("channel delete verify")) {
+            event.reply("Verification channel has been deleted").setEphemeral(true).queue();
 
+            Guild guild = event.getGuild();
+            assert guild != null;
+            List<Role> verified = event.getGuild().getRolesByName("Verified", true);
+            List<Role> unverified = event.getGuild().getRolesByName("Unverified", true);
+
+            if (!verified.isEmpty()) verified.get(0).delete().queue();
+            if (!unverified.isEmpty()) unverified.get(0).delete().queue();
+
+            Objects.requireNonNull(event.getInteraction().getGuild())
+                .getTextChannels().forEach(channel -> {
+                    if (channel.getName().equalsIgnoreCase("verify")) {
+                        channel.delete().queue();
+                    } else {
+                        if (channel.getPermissionOverride(event.getGuild().getPublicRole()) != null) {
+                            Objects.requireNonNull(channel.getPermissionOverride(event.getGuild().getPublicRole())).delete().queue();
+                        }
+                    }
+                });
         }
         if (event.getFullCommandName().equals("channel create verify")) {
             List<TextChannel> verifyChannel = Objects.requireNonNull(event.getGuild()).getTextChannelsByName("verify", true);
@@ -33,7 +52,6 @@ public class VerifyCommand extends ListenerAdapter {
             if (!unverifiedRole.isEmpty()) {
                 unverifiedRole.forEach(role -> role.delete().queue());
             }
-
             event.getGuild().createRole().setName("Unverified").queue((role) -> {
                 role.getManager().setColor(Color.BLACK).setPermissions(Permission.EMPTY_PERMISSIONS).queue();
 
@@ -61,20 +79,19 @@ public class VerifyCommand extends ListenerAdapter {
             List<Role> verifiedRole = event.getGuild().getRolesByName("Verified", true);
             if (!verifiedRole.isEmpty()) {
                 verifiedRole.forEach(role -> role.delete().queue());
-
-                event.getGuild().createRole().setName("Verified").queue((role) -> {
-                    role.getManager().setColor(Color.GREEN).queue();
-                    event.getInteraction().getGuild()
-                        .getTextChannels().forEach(channel -> {
-                            if (!channel.getName().equalsIgnoreCase("verify")) {
-                                channel.upsertPermissionOverride(Objects.requireNonNull(event.getGuild().getRoleById(role.getId()))).grant(Permission.VIEW_CHANNEL).queue();
-                                channel.upsertPermissionOverride(event.getGuild().getPublicRole()).deny(Permission.VIEW_CHANNEL).queue();
-                            } else {
-                                channel.upsertPermissionOverride(Objects.requireNonNull(event.getGuild().getRoleById(role.getId()))).deny(Permission.VIEW_CHANNEL).queue();
-                            }
-                        });
-                });
             }
+            event.getGuild().createRole().setName("Verified").queue((role) -> {
+                role.getManager().setColor(Color.GREEN).queue();
+                Objects.requireNonNull(event.getInteraction().getGuild())
+                    .getTextChannels().forEach(channel -> {
+                        if (!channel.getName().equalsIgnoreCase("verify")) {
+                            channel.upsertPermissionOverride(Objects.requireNonNull(event.getGuild().getRoleById(role.getId()))).grant(Permission.VIEW_CHANNEL).queue();
+                            channel.upsertPermissionOverride(event.getGuild().getPublicRole()).deny(Permission.VIEW_CHANNEL).queue();
+                        } else {
+                            channel.upsertPermissionOverride(Objects.requireNonNull(event.getGuild().getRoleById(role.getId()))).deny(Permission.VIEW_CHANNEL).queue();
+                        }
+                    });
+            });
 
             event.reply("Verification channel has been created").setEphemeral(true).queue();
         }

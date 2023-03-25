@@ -72,9 +72,10 @@ public class RegisterCommands {
                 .addOption(OptionType.STRING, "reason", "The reason for the unmute", false),
 
             Commands.slash("warn", "Warn a user")
-                .addOption(OptionType.USER, "user", "Warn a member", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the warn", false)
                 .addSubcommands(
+                    new SubcommandData("user", "The member")
+                        .addOption(OptionType.USER, "user", "Warn a member", true)
+                        .addOption(OptionType.STRING, "reason", "The reason for the warn", false),
                     new SubcommandData("delete", "Delete a warn for user")
                         .addOption(OptionType.USER, "user", "The member", true)
                         .addOption(OptionType.STRING, "reason", "The reason to delete a warn", false),
@@ -96,6 +97,9 @@ public class RegisterCommands {
                     )
                 )
                 .addSubcommandGroups(new SubcommandGroupData("create", "create the channel")
+                    .addSubcommands(new SubcommandData("verify", "The channel to create as verification channel"))
+                )
+                .addSubcommandGroups(new SubcommandGroupData("delete", "create the channel")
                     .addSubcommands(new SubcommandData("verify", "The channel to create as verification channel"))
                 ),
 
