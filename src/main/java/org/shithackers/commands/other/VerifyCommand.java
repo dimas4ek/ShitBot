@@ -121,6 +121,7 @@ public class VerifyCommand extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
         List<TextChannel> verificationChannel = event.getGuild().getTextChannelsByName("verify", true);
+        if(verificationChannel.isEmpty()) return;
         if (event.getChannel().asTextChannel().equals(verificationChannel.get(0))) {
             if (event.getMessage().getContentRaw().equals("verify")) {
                 Guild guild = event.getGuild();

@@ -1,7 +1,6 @@
 package org.shithackers.utils;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -12,9 +11,9 @@ import org.shithackers.commands.mod.BanUserCommand;
 import org.shithackers.commands.mod.MuteUserCommand;
 import org.shithackers.commands.mod.ReportCommand;
 import org.shithackers.commands.mod.WarnCommand;
-import org.shithackers.commands.music.MusicCommand;
 import org.shithackers.commands.other.*;
-import org.shithackers.listeners.*;
+import org.shithackers.listeners.LinksListener;
+import org.shithackers.listeners.MessagesListener;
 
 public class RegisterCommands {
     public static void register(JDA api) {
@@ -25,17 +24,15 @@ public class RegisterCommands {
             new MuteUserCommand(),
             new WarnCommand(),
             new WelcomeCommand(),
-            //new UserJoinLeaveListener(),
             new ReportCommand(),
             new WeatherCommand(),
             new MessagesListener(),
             new PrintQuoteCommand(),
             new AvatarCommand(),
-            new MusicCommand(),
-            new MemberMusicListener(),
+            //new MusicCommand(),
+            //new MemberMusicListener(),
             new TestCommand(),
             new LinksListener(),
-            //new VerifyListener(),
             new VerifyCommand()
         );
 
