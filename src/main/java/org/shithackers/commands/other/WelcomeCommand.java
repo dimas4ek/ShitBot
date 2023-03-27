@@ -13,18 +13,18 @@ public class WelcomeCommand extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        String username = "postgres";
-        String password = "root";
-        String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
-
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
         if (event.getFullCommandName().equals("channel set welcome")) {
+            String username = "postgres";
+            String password = "root";
+            String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
+
+            Connection connection;
+            try {
+                connection = DriverManager.getConnection(url, username, password);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
             Guild guild = event.getGuild();
             assert guild != null;
 

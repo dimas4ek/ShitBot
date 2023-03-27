@@ -1,8 +1,10 @@
 package org.shithackers.utils;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.shithackers.commands.info.ServerInfoCommand;
@@ -14,6 +16,10 @@ import org.shithackers.commands.mod.WarnCommand;
 import org.shithackers.commands.other.*;
 import org.shithackers.listeners.LinksListener;
 import org.shithackers.listeners.MessagesListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 public class RegisterCommands {
     public static void register(JDA api) {
@@ -33,11 +39,28 @@ public class RegisterCommands {
             //new MemberMusicListener(),
             new TestCommand(),
             new LinksListener(),
-            new VerifyCommand()
+            new VerifyCommand(),
+            new PollCommand()
         );
 
+        List<OptionData> optionData = new ArrayList<>();
+        optionData.add(new OptionData(OptionType.STRING, "message", "message", true));
+        for (int i = 1; i <= 10; i++) {
+            boolean isRequired = i <= 2;
+            optionData.add(new OptionData(OptionType.STRING, "choice" + i, "choice" + i, isRequired));
+        }
         api.updateCommands().addCommands(
             Commands.slash("test", "test"),
+
+            Commands.slash("poll", "Create a poll")
+                .addSubcommands(
+                    new SubcommandData("create", "Create a poll")
+                        .addOptions(optionData),
+                    new SubcommandData("show", "Show a poll")
+                        .addOption(OptionType.STRING, "poll", "Poll ID", true),
+                    new SubcommandData("delete", "Show a poll")
+                        .addOption(OptionType.STRING, "poll", "Poll ID", true)
+                ),
 
             Commands.slash("play", "Play a song")
                 .addOption(OptionType.STRING, "link", "Insert youtube link here", false),
