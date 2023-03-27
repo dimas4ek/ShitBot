@@ -18,7 +18,7 @@ public class WeatherCommand extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getFullCommandName().equals("weather")) {
             String city = event.getOption("city").getAsString();
-            String weatherApiKey = "a72f274b6bd6f873d04b7e7e28c40fb5";
+            String weatherApiKey = "***";
             String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + weatherApiKey;
 
             try {
