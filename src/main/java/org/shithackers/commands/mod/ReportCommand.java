@@ -29,6 +29,7 @@ public class ReportCommand extends ListenerAdapter {
 
                 PreparedStatement st = connection.prepareStatement(
                     "SELECT server_id FROM moderation_channels WHERE server_id = ?");
+                assert guild != null;
                 st.setString(1, guild.getId());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
@@ -45,8 +46,7 @@ public class ReportCommand extends ListenerAdapter {
                 st.setString(2, guild.getId());
                 st.executeUpdate();
 
-                event.reply("Moderation channel set to " + modChannel.getAsMention()).queue();
-                event.getChannel().deleteMessageById(event.getChannel().getLatestMessageId());
+                event.reply("Moderation channel set to " + modChannel.getAsMention()).setEphemeral(true).queue();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

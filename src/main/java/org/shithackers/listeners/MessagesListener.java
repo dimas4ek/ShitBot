@@ -7,12 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessagesListener extends ListenerAdapter {
-
-    List<String> messageToDelete = new ArrayList<String>() {{
-        add("hui");
-        add("chlen");
-        add("zopa");
-    }};
+    List<String> messageToDelete = new ArrayList<>(List.of(
+        "zhopa", "hui", "chlen"
+    ));
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {

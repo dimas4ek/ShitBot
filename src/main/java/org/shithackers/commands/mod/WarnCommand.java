@@ -41,16 +41,12 @@ public class WarnCommand extends ListenerAdapter {
         }
 
         if (event.getFullCommandName().equals("warn clear")) {
-            User user = event.getOption("user").getAsUser();
-            OptionMapping mapping = event.getOption("reason");
-            String reason = null;
-            if (mapping != null) reason = mapping.getAsString();
-
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
             ModerUtils.clearWarn(guild, user, connection, event);
         }
 
         if(event.getFullCommandName().equals("warns")) {
-            User user = event.getOption("user").getAsUser();
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
             ModerUtils.getWarns(guild, user, connection, event);
         }
 

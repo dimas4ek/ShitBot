@@ -39,12 +39,11 @@ public class PrintQuoteCommand extends ListenerAdapter {
             new Thread(() -> {
                 while (running) {
                     try {
-                        Guild guild = event.getGuild();
-                        String channelName = Objects.requireNonNull(event.getOption("channel")).getAsChannel().getName();
-                        TextChannel textChannel = guild.getTextChannelsByName(channelName, true).get(0);
+                        TextChannel channel = Objects.requireNonNull(event.getOption("channel")).getAsChannel().asTextChannel();
 
-                        event.reply("Started").queue();
-                        textChannel.sendMessage(replies.get(new Random().nextInt(replies.size()))).queue();
+                        event.reply("Started").setEphemeral(true).queue();
+                        channel.sendMessage(replies.get(new Random().nextInt(replies.size()))).queue();
+
                         TimeUnit.HOURS.sleep(3);
                     } catch (Exception e) {
                         e.printStackTrace();

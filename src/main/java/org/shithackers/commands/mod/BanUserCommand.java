@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.shithackers.utils.ModerUtils;
 
+import java.util.Objects;
+
 public class BanUserCommand extends ListenerAdapter {
 
 
@@ -16,7 +18,7 @@ public class BanUserCommand extends ListenerAdapter {
         assert guild != null;
 
         if(event.getFullCommandName().equals("ban")) {
-            User user = event.getOption("user").getAsUser();
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
             OptionMapping optReason = event.getOption("reason");
             String reason = null;
             if (optReason != null) reason = optReason.getAsString();
@@ -25,7 +27,7 @@ public class BanUserCommand extends ListenerAdapter {
             event.reply("User " + user.getAsMention() + " was banned for " + (reason != null ? " for \"" + reason + "\"" : "")).queue();
         }
         if(event.getFullCommandName().equals("unban")) {
-            User user = event.getOption("user").getAsUser();
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
             OptionMapping mapping = event.getOption("reason");
             String reason = null;
             if (mapping != null) reason = mapping.getAsString();

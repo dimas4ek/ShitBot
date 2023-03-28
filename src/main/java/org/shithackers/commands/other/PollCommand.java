@@ -134,10 +134,10 @@ public class PollCommand extends ListenerAdapter {
                 if (rs.next()) {
                     assert guild != null;
                     if (rs.getString("server_id").equals(guild.getId())) {
-                        if (rs.getString("poll_id").equals(event.getOption("poll").getAsString())) {
+                        if (Objects.requireNonNull(event.getOption("poll")).getAsString().equals(rs.getString("poll_id"))) {
                             st = connection.prepareStatement(
                                 "SELECT cardinality(options), message, options, reactions FROM polls WHERE poll_id = ?");
-                            st.setString(1, event.getOption("poll").getAsString());
+                            st.setString(1, Objects.requireNonNull(event.getOption("poll")).getAsString());
                             rs = st.executeQuery();
                             if (rs.next()) {
                                 List<String> optionValues = Arrays.asList((String[]) rs.getArray("options").getArray());
@@ -165,7 +165,7 @@ public class PollCommand extends ListenerAdapter {
             String password = "root";
             String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
 
-            String pollId = event.getOption("poll").getAsString();
+            String pollId = Objects.requireNonNull(event.getOption("poll")).getAsString();
 
             RestAction<Message> retrieveAction = event.getChannel().retrieveMessageById(pollId);
 

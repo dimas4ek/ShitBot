@@ -19,7 +19,7 @@ public class UserInfoCommand extends ListenerAdapter
 {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.getFullCommandName().equals("userinfo")) {
+        if (event.getFullCommandName().equals("user")) {
             List<String> urls = new ArrayList<>();
             try (BufferedReader br = new BufferedReader(new FileReader("shitImagesURLs.txt"))) {
                 String line;

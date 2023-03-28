@@ -7,40 +7,24 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ServerInfoCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.getFullCommandName().equals("serverinfo")) {
-            List<Member> members = event.getGuild().getMembers();
-            System.out.println(members);
-            int onlineMembers = 0;
-            int offlineMembers = 0;
-            int idleMembers = 0;
-            int dndMembers = 0;
+        if (event.getFullCommandName().equals("server")) {
+            List<Member> members = Objects.requireNonNull(event.getGuild()).getMembers();
+            Map<OnlineStatus, Integer> statusCounts = new HashMap<>();
             for (Member member : members) {
-                if (member.getOnlineStatus() == OnlineStatus.ONLINE) {
-                    onlineMembers++;
-                }
-                if (member.getOnlineStatus() == OnlineStatus.DO_NOT_DISTURB) {
-                    dndMembers++;
-                }
-                if (member.getOnlineStatus() == OnlineStatus.IDLE) {
-                    idleMembers++;
-                }
-                if (member.getOnlineStatus() == OnlineStatus.OFFLINE) {
-                    offlineMembers++;
-                }
+                OnlineStatus onlineStatus = member.getOnlineStatus();
+                statusCounts.merge(onlineStatus, 1, Integer::sum);
             }
-            System.out.println(offlineMembers);
             List<String> statuses = new ArrayList<>();
-            statuses.add(onlineMembers + " online");
-            statuses.add(idleMembers + " idle");
-            statuses.add(dndMembers + " dnd");
-            statuses.add(offlineMembers + " offline");
+            for (Map.Entry<OnlineStatus, Integer> entry : statusCounts.entrySet()) {
+                String statusString = entry.getValue() + " " + entry.getKey().name().toLowerCase();
+                if (entry.getKey() == OnlineStatus.DO_NOT_DISTURB) statuses.add(entry.getValue() + " dnd");
+                else statuses.add(statusString);
+            }
 
             event.replyEmbeds(
                 new EmbedBuilder()
@@ -48,7 +32,7 @@ public class ServerInfoCommand extends ListenerAdapter {
                     .addField("Members", String.valueOf(event.getGuild().getMemberCount()), true)
                     .addField("Statuses", String.join("\n", statuses), true)
                     .addField("Channels", String.valueOf(event.getGuild().getChannels().size()), true)
-                    .addField("Server owner", event.getGuild().getOwner().getAsMention(), true)
+                    .addField("Server owner", Objects.requireNonNull(event.getGuild().getOwner()).getAsMention(), true)
                     .addField("Privacy level", Objects.requireNonNull(event.getGuild().getVerificationLevel()).toString(), true)
                     .addField("User created", event.getGuild().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                     .setThumbnail(event.getGuild().getIconUrl())

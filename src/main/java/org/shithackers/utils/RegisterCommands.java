@@ -68,10 +68,10 @@ public class RegisterCommands {
             Commands.slash("avatar", "Get the avatar of a user")
                 .addOption(OptionType.USER, "user", "The user to get the avatar of", false),
 
-            Commands.slash("userinfo", "Get info about a user")
+            Commands.slash("user", "Get info about a user")
                 .addOption(OptionType.USER, "user", "The user to get info about", true),
 
-            Commands.slash("serverinfo", "Get info about the server"),
+            Commands.slash("server", "Get info about the server"),
 
             Commands.slash("ban", "Ban a user")
                 .addOption(OptionType.USER, "user", "The user to ban", true)

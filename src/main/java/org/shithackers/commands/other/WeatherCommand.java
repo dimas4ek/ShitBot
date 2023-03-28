@@ -12,13 +12,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class WeatherCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getFullCommandName().equals("weather")) {
-            String city = event.getOption("city").getAsString();
-            String weatherApiKey = "***";
+            String city = Objects.requireNonNull(event.getOption("city")).getAsString();
+            String weatherApiKey = "f8e7459122299728e1d89fbdb3e07262";
             String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + weatherApiKey;
 
             try {

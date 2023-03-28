@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.shithackers.utils.RegisterCommands;
+
+import java.util.EnumSet;
 
 public class Main {
     private static final String TOKEN = "***";
@@ -18,7 +21,8 @@ public class Main {
             JDA api = JDABuilder.createDefault(TOKEN)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_VOICE_STATES)
+                .enableCache(EnumSet.allOf(CacheFlag.class))
+                .enableIntents(EnumSet.allOf(GatewayIntent.class))
                 .build();
 
             RegisterCommands.register(api);

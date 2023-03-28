@@ -20,7 +20,7 @@ public class LinksListener extends ListenerAdapter {
             OkHttpClient client = new OkHttpClient();
 
             String url = "https://www.virustotal.com/api/v3/urls";
-            String apiKey = "***";
+            String apiKey = "cb5d33034e119e18614b7fb35d364f54850e891944cacf7aa93c9ea56007e5bf";
 
             RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -35,6 +35,7 @@ public class LinksListener extends ListenerAdapter {
 
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseBody = response.body().string();
                     JSONObject json = new JSONObject(responseBody);
                     String dataId = json.getJSONObject("data").getString("id");
@@ -47,6 +48,7 @@ public class LinksListener extends ListenerAdapter {
 
                     try (Response response2 = client.newCall(request2).execute()) {
                         if (response2.isSuccessful()) {
+                            assert response2.body() != null;
                             String responseBody2 = response2.body().string();
                             JSONObject json2 = new JSONObject(responseBody2);
                             int sus = json2.getJSONObject("data").getJSONObject("attributes").getJSONObject("stats").getInt("suspicious");
@@ -57,8 +59,6 @@ public class LinksListener extends ListenerAdapter {
                             } else if (sus > 0) {
                                 event.getMessage().reply("this site is suspicious").queue();
                             }
-                        } else {
-                            System.out.println("Error: " + response2.code() + " " + response2.message());
                         }
                     }
                 }
