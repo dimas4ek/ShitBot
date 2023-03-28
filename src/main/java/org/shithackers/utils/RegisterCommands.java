@@ -1,7 +1,6 @@
 package org.shithackers.utils;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -19,7 +18,6 @@ import org.shithackers.listeners.MessagesListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class RegisterCommands {
     public static void register(JDA api) {
@@ -91,14 +89,16 @@ public class RegisterCommands {
                 .addOption(OptionType.USER, "user", "The user to unmute", true)
                 .addOption(OptionType.STRING, "reason", "The reason for the unmute", false),
 
+            Commands.slash("report", "Report something")
+                    .addOption(OptionType.STRING, "reason", "reason", true),
+
             Commands.slash("warn", "Warn a user")
                 .addSubcommands(
                     new SubcommandData("user", "The member")
                         .addOption(OptionType.USER, "user", "Warn a member", true)
                         .addOption(OptionType.STRING, "reason", "The reason for the warn", false),
                     new SubcommandData("delete", "Delete a warn for user")
-                        .addOption(OptionType.USER, "user", "The member", true)
-                        .addOption(OptionType.STRING, "reason", "The reason to delete a warn", false),
+                        .addOption(OptionType.USER, "user", "The member", true),
                     new SubcommandData("clean", "Clear all warns for a user")
                         .addOption(OptionType.USER, "user", "The member", true)
                         .addOption(OptionType.STRING, "reason", "The reason to clear", false),
@@ -122,19 +122,6 @@ public class RegisterCommands {
                 .addSubcommandGroups(new SubcommandGroupData("delete", "create the channel")
                     .addSubcommands(new SubcommandData("verify", "The channel to create as verification channel"))
                 ),
-
-           /*Commands.slash("set-welcome-channel", "Set the welcome channel")
-                .addOption(OptionType.CHANNEL, "channel", "The channel to set as the welcome channel", true),
-
-            Commands.slash("set-moderation-channel", "Set the moderation channel")
-                .addOption(OptionType.CHANNEL, "channel", "The channel to set as the moderation channel", true),
-            Commands.slash("report", "Report a user")
-                .addOption(OptionType.USER, "user", "The user to report", true)
-                .addOption(OptionType.STRING, "reason", "The reason for the report", false),*/
-
-            /*Commands.slash("create", "Set the verify channel")
-                .addSubcommandGroups(new SubcommandGroupData("channel", "verify")
-                    .addSubcommands(new SubcommandData("verify", "channel"))),*/
 
             Commands.slash("weather", "Get the weather of a city")
                 .addOption(OptionType.STRING, "city", "The city to get the weather of", true),

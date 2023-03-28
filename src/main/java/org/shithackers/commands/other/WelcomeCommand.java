@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.sql.*;
+import java.util.List;
+import java.util.Objects;
 
 public class WelcomeCommand extends ListenerAdapter {
 
@@ -98,13 +100,21 @@ public class WelcomeCommand extends ListenerAdapter {
                 "SELECT channel_name FROM welcome_channels WHERE server_id = ?");
             st.setString(1, event.getGuild().getId());
 
-            ResultSet rs = st.executeQuery();
+            /*ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 String channelName = rs.getString("channel_name");
                 event.getGuild().getTextChannelsByName(channelName, true).forEach(channel -> {
                     channel.sendMessage(event.getMember().getAsMention() + " has left " + event.getGuild().getName() + "!").queue();
                 });
-
+            }*/
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                String channelName = rs.getString("channel_name");
+                Guild guild = event.getGuild();
+                guild.getTextChannelsByName(channelName, true)
+                    .forEach(channel -> channel.sendMessage(
+                            Objects.requireNonNull(event.getMember()).getAsMention() + " has left " + guild.getName() + "!")
+                        .queue());
             }
         } catch (
             SQLException e) {

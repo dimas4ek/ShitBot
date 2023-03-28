@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class UserInfoCommand extends ListenerAdapter
@@ -29,8 +30,9 @@ public class UserInfoCommand extends ListenerAdapter
                 e.printStackTrace();
             }
 
-            Member member = event.getGuild().getMember(event.getOption("user").getAsUser());
+            Member member = Objects.requireNonNull(event.getGuild()).getMember(Objects.requireNonNull(event.getOption("user")).getAsUser());
 
+            assert member != null;
             event.replyEmbeds(
                 new EmbedBuilder()
                     .setTitle("User Info")

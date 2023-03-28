@@ -17,9 +17,9 @@ public class BanUserCommand extends ListenerAdapter {
 
         if(event.getFullCommandName().equals("ban")) {
             User user = event.getOption("user").getAsUser();
-            OptionMapping mapping = event.getOption("reason");
+            OptionMapping optReason = event.getOption("reason");
             String reason = null;
-            if (mapping != null) reason = mapping.getAsString();
+            if (optReason != null) reason = optReason.getAsString();
 
             ModerUtils.banUser(guild, user, reason);
             event.reply("User " + user.getAsMention() + " was banned for " + (reason != null ? " for \"" + reason + "\"" : "")).queue();

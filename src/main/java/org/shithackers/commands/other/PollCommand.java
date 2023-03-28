@@ -20,6 +20,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PollCommand extends ListenerAdapter {
@@ -32,7 +33,7 @@ public class PollCommand extends ListenerAdapter {
 
             Guild guild = event.getGuild();
 
-            String pollMessage = event.getOption("message").getAsString();
+            String pollMessage = Objects.requireNonNull(event.getOption("message")).getAsString();
 
             List<String> emojis = Arrays.asList(
                 "\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3",
@@ -42,6 +43,7 @@ public class PollCommand extends ListenerAdapter {
                 Connection connection = DriverManager.getConnection(url, username, password);
                 PreparedStatement st = connection.prepareStatement(
                     "SELECT server_id, message, options FROM polls WHERE server_id = ?");
+                assert guild != null;
                 st.setString(1, guild.getId());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
@@ -127,9 +129,10 @@ public class PollCommand extends ListenerAdapter {
                 Connection connection = DriverManager.getConnection(url, username, password);
                 PreparedStatement st = connection.prepareStatement(
                     "SELECT server_id, poll_id FROM polls WHERE poll_id = ?");
-                st.setString(1, event.getOption("poll").getAsString());
+                st.setString(1, Objects.requireNonNull(event.getOption("poll")).getAsString());
                 ResultSet rs = st.executeQuery();
                 if (rs.next()) {
+                    assert guild != null;
                     if (rs.getString("server_id").equals(guild.getId())) {
                         if (rs.getString("poll_id").equals(event.getOption("poll").getAsString())) {
                             st = connection.prepareStatement(
@@ -199,7 +202,7 @@ public class PollCommand extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
-        if (event.getUser().isBot()) return;
+        if (Objects.requireNonNull(event.getUser()).isBot()) return;
         char emojiName = event.getReaction().getEmoji().getName().charAt(0);
 
         String username = "postgres";
@@ -232,7 +235,7 @@ public class PollCommand extends ListenerAdapter {
 
     @Override
     public void onMessageReactionRemove(MessageReactionRemoveEvent event) {
-        if (event.getUser().isBot()) return;
+        if (Objects.requireNonNull(event.getUser()).isBot()) return;
         char emojiName = event.getReaction().getEmoji().getName().charAt(0);
 
         String username = "postgres";

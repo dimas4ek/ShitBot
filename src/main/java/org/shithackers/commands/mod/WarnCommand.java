@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.shithackers.utils.ModerUtils;
 
 import java.sql.*;
+import java.util.Objects;
 
 public class WarnCommand extends ListenerAdapter {
 
@@ -28,21 +29,14 @@ public class WarnCommand extends ListenerAdapter {
         Guild guild = event.getGuild();
         assert guild != null;
 
-        if(event.getFullCommandName().equals("warn")) {
-            User user = event.getOption("user").getAsUser();
-            OptionMapping mapping = event.getOption("reason");
-            String reason = null;
-            if (mapping != null) reason = mapping.getAsString();
-
+        if (event.getFullCommandName().equals("warn")) {
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
+            String reason = event.getOption("reason") != null ? Objects.requireNonNull(event.getOption("reason")).getAsString() : null;
             ModerUtils.warnUser(guild, user, reason, connection, event);
         }
 
-        if(event.getFullCommandName().equals("warn delete")) {
-            User user = event.getOption("user").getAsUser();
-            OptionMapping mapping = event.getOption("reason");
-            String reason = null;
-            if (mapping != null) reason = mapping.getAsString();
-
+        if (event.getFullCommandName().equals("warn delete")) {
+            User user = Objects.requireNonNull(event.getOption("user")).getAsUser();
             ModerUtils.deleteWarn(guild, user, connection, event);
         }
 

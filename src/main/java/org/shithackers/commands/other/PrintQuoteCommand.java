@@ -10,7 +10,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class PrintQuoteCommand extends ListenerAdapter {
 
@@ -38,18 +40,20 @@ public class PrintQuoteCommand extends ListenerAdapter {
                 while (running) {
                     try {
                         Guild guild = event.getGuild();
-                        String channelName = event.getOption("channel").getAsChannel().getName();
+                        String channelName = Objects.requireNonNull(event.getOption("channel")).getAsChannel().getName();
                         TextChannel textChannel = guild.getTextChannelsByName(channelName, true).get(0);
 
                         event.reply("Started").queue();
                         textChannel.sendMessage(replies.get(new Random().nextInt(replies.size()))).queue();
-                        Thread.sleep(1000 * 60 * 60 * 3);
+                        TimeUnit.HOURS.sleep(3);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-        } else if (event.getFullCommandName().equalsIgnoreCase("quote stop")) {
+        }
+
+        if (event.getFullCommandName().equals("quote stop")) {
             event.reply("Stopped").queue();
             running = false;
         }
