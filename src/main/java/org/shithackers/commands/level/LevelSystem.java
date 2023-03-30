@@ -1,5 +1,8 @@
 package org.shithackers.commands.level;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -87,7 +90,31 @@ public class LevelSystem extends ListenerAdapter {
             updateLevelSt.setString(3, guildId);
             updateLevelSt.setString(4, userId);
             updateLevelSt.executeUpdate();
+
             event.getChannel().sendMessage(Objects.requireNonNull(event.getGuild().getMemberById(userId)).getAsMention() + " leveled up to " + newLevel).queue();
+        }
+
+        checkRewards(connection, event.getGuild(), userId, guildId, newLevel);
+    }
+
+    private void checkRewards(Connection connection, Guild guild, String userId, String guildId, int newLevel) throws SQLException {
+        String checkRewardQuery = "SELECT level, reward, type FROM level_rewards WHERE server_id = ?";
+        PreparedStatement checkRewardsSt = connection.prepareStatement(checkRewardQuery);
+        checkRewardsSt.setString(1, guildId);
+        ResultSet rs = checkRewardsSt.executeQuery();
+        while (rs.next()) {
+            int rewardLevel = rs.getInt("level");
+            if (newLevel == rewardLevel) {
+                if (rs.getString("type").equals("role")) {
+                    Role rewardRole = guild.getRoleById(rs.getString("reward"));
+                    Member member = guild.getMemberById(userId);
+                    if (rewardRole != null && member != null && !member.getRoles().contains(rewardRole)) {
+                        guild.addRoleToMember(member, rewardRole).queue();
+                    } else {
+                        return;
+                    }
+                }
+            }
         }
     }
 

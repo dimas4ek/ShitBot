@@ -10,6 +10,7 @@ import org.shithackers.commands.info.ServerInfoCommand;
 import org.shithackers.commands.info.UserInfoCommand;
 import org.shithackers.commands.level.LevelCommand;
 import org.shithackers.commands.level.LevelSystem;
+import org.shithackers.commands.level.RewardCommand;
 import org.shithackers.commands.mod.BanUserCommand;
 import org.shithackers.commands.mod.MuteUserCommand;
 import org.shithackers.commands.mod.ReportCommand;
@@ -42,28 +43,37 @@ public class RegisterCommands {
             new VerifyCommand(),
             new PollCommand(),
             new LevelSystem(),
-            new LevelCommand()
+            new LevelCommand(),
+            new RewardCommand()
         );
 
-        List<OptionData> optionData = new ArrayList<>();
-        optionData.add(new OptionData(OptionType.STRING, "message", "message", true));
+        OptionData reward = new OptionData(OptionType.STRING, "reward", "Reward", true)
+            .addChoice("add role", "role")
+            .addChoice("get access to channel", "channel");
+
+        List<OptionData> choices = new ArrayList<>();
+        choices.add(new OptionData(OptionType.STRING, "message", "message", true));
         for (int i = 1; i <= 10; i++) {
             boolean isRequired = i <= 2;
-            optionData.add(new OptionData(OptionType.STRING, "choice" + i, "choice" + i, isRequired));
+            choices.add(new OptionData(OptionType.STRING, "choice" + i, "choice" + i, isRequired));
         }
+
         api.updateCommands().addCommands(
             Commands.slash("test", "test"),
 
             Commands.slash("level", "Get your level")
                 .addSubcommands(
                     new SubcommandData("show", "Show your level"),
-                    new SubcommandData("leaderboard", "Show the level leaderboard")
+                    new SubcommandData("leaderboard", "Show the level leaderboard"),
+                    new SubcommandData("reward", "Get a reward for your level")
+                        .addOption(OptionType.STRING, "level", "Level", true)
+                        .addOptions(reward)
                 ),
 
             Commands.slash("poll", "Create a poll")
                 .addSubcommands(
                     new SubcommandData("create", "Create a poll")
-                        .addOptions(optionData),
+                        .addOptions(choices),
                     new SubcommandData("show", "Show a poll")
                         .addOption(OptionType.STRING, "poll", "Poll ID", true),
                     new SubcommandData("delete", "Show a poll")

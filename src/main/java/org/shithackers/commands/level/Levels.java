@@ -4,6 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Levels {
+    public Levels() {
+        for (Map.Entry<Integer, Integer> level : levels.entrySet()) {
+            System.out.println(level.getKey() + " " + level.getValue());
+        }
+    }
+
     protected static final Map<Integer, Integer> levels = new HashMap<>();
 
     static {
