@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.shithackers.commands.info.ServerInfoCommand;
 import org.shithackers.commands.info.UserInfoCommand;
+import org.shithackers.commands.level.LevelCommand;
+import org.shithackers.commands.level.LevelSystem;
 import org.shithackers.commands.mod.BanUserCommand;
 import org.shithackers.commands.mod.MuteUserCommand;
 import org.shithackers.commands.mod.ReportCommand;
@@ -38,7 +40,9 @@ public class RegisterCommands {
             new TestCommand(),
             new LinksListener(),
             new VerifyCommand(),
-            new PollCommand()
+            new PollCommand(),
+            new LevelSystem(),
+            new LevelCommand()
         );
 
         List<OptionData> optionData = new ArrayList<>();
@@ -49,6 +53,12 @@ public class RegisterCommands {
         }
         api.updateCommands().addCommands(
             Commands.slash("test", "test"),
+
+            Commands.slash("level", "Get your level")
+                .addSubcommands(
+                    new SubcommandData("show", "Show your level"),
+                    new SubcommandData("leaderboard", "Show the level leaderboard")
+                ),
 
             Commands.slash("poll", "Create a poll")
                 .addSubcommands(
