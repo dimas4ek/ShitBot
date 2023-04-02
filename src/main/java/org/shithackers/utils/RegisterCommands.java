@@ -65,9 +65,10 @@ public class RegisterCommands {
                 .addSubcommands(
                     new SubcommandData("show", "Show your level"),
                     new SubcommandData("leaderboard", "Show the level leaderboard"),
-                    new SubcommandData("reward", "Get a reward for your level")
+                    new SubcommandData("reward", "Set a reward for a level")
                         .addOption(OptionType.STRING, "level", "Level", true)
-                        .addOptions(reward)
+                        .addOptions(reward),
+                    new SubcommandData("rewards", "Get list of rewards")
                 ),
 
             Commands.slash("poll", "Create a poll")
@@ -110,7 +111,7 @@ public class RegisterCommands {
                 .addOption(OptionType.STRING, "reason", "The reason for the unmute", false),
 
             Commands.slash("report", "Report something")
-                    .addOption(OptionType.STRING, "reason", "reason", true),
+                .addOption(OptionType.STRING, "reason", "reason", true),
 
             Commands.slash("warn", "Warn a user")
                 .addSubcommands(

@@ -1,14 +1,15 @@
 package org.shithackers.commands.level;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class LevelSystem extends ListenerAdapter {
     @Override
@@ -105,14 +106,17 @@ public class LevelSystem extends ListenerAdapter {
         while (rs.next()) {
             int rewardLevel = rs.getInt("level");
             if (newLevel == rewardLevel) {
+                Member member = guild.getMemberById(userId);
                 if (rs.getString("type").equals("role")) {
                     Role rewardRole = guild.getRoleById(rs.getString("reward"));
-                    Member member = guild.getMemberById(userId);
                     if (rewardRole != null && member != null && !member.getRoles().contains(rewardRole)) {
                         guild.addRoleToMember(member, rewardRole).queue();
-                    } else {
-                        return;
                     }
+                }
+                if (rs.getString("type").equals("channel")) {
+                    assert member != null;
+                    Objects.requireNonNull(guild.getGuildChannelById(rs.getString("reward")))
+                        .getPermissionContainer().upsertPermissionOverride(member).grant(Permission.VIEW_CHANNEL).queue();
                 }
             }
         }
