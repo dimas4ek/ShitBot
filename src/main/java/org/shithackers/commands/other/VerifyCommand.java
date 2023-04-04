@@ -109,11 +109,15 @@ public class VerifyCommand extends ListenerAdapter {
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Guild guild = event.getGuild();
         Member member = event.getMember();
-        TextChannel verificationChannel = guild.getTextChannelsByName("verify", true).get(0);
+        TextChannel verifyChannel = null;
+        List<TextChannel> verifyChannels = guild.getTextChannelsByName("verify", true);
+        if (!verifyChannels.isEmpty()) {
+            verifyChannel = verifyChannels.get(0);
+        }
 
-        if (!guild.getRolesByName("Unverified", true).isEmpty() && verificationChannel != null) {
+        if (!guild.getRolesByName("Unverified", true).isEmpty() && verifyChannel != null) {
             guild.modifyMemberRoles(member, guild.getRolesByName("Unverified", true)).queue();
-            verificationChannel.sendMessage("Welcome to the server, " + member.getAsMention() + "! Please type `verify` to verify yourself.").queue();
+            //verifyChannel.sendMessage("Welcome to the server, " + member.getAsMention() + "! Please type `verify` to verify yourself.").queue();
         }
     }
 

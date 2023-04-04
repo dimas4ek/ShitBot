@@ -1,119 +1,90 @@
 package org.shithackers.commands.other;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jooq.DSLContext;
+import org.shithackers.db.Tables;
+import org.shithackers.db.tables.records.WelcomeChannelsRecord;
+import org.shithackers.utils.ShitBotDatabase;
 
-import java.sql.*;
-import java.util.List;
 import java.util.Objects;
 
-public class WelcomeCommand extends ListenerAdapter {
+import static org.shithackers.db.tables.WelcomeChannels.WELCOME_CHANNELS;
 
+public class WelcomeCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getFullCommandName().equals("channel set welcome")) {
-            String username = "postgres";
-            String password = "root";
-            String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
+            DSLContext dslContext = ShitBotDatabase.getDSLContext();
 
-            Connection connection;
-            try {
-                connection = DriverManager.getConnection(url, username, password);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-            Guild guild = event.getGuild();
-            assert guild != null;
-
-            TextChannel channel = Objects.requireNonNull(event.getOption("channel")).getAsChannel().asTextChannel();
-            try {
-                PreparedStatement st = connection.prepareStatement(
-                    "SELECT server_id FROM welcome_channels WHERE server_id = ?");
-                st.setString(1, guild.getId());
-                ResultSet rs = st.executeQuery();
-                if (rs.next()) {
-                    if (rs.getString("server_id").equals(guild.getId())) {
-                        st = connection.prepareStatement(
-                            "UPDATE welcome_channels SET channel_name = ? WHERE server_id = ?");
-                    }
-                } else {
-                    st = connection.prepareStatement(
-                        "INSERT INTO welcome_channels (channel_name, server_id) VALUES (?, ?)");
-                }
-
-                st.setString(1, channel.getName());
-                st.setString(2, guild.getId());
-                st.executeUpdate();
-
-                event.reply("Welcome channel set to " + channel.getAsMention()).setEphemeral(true).queue();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            setWelcomeChannel(event, dslContext);
         }
     }
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        String username = "postgres";
-        String password = "root";
-        String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
+        DSLContext dslContext = ShitBotDatabase.getDSLContext();
 
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement st = connection.prepareStatement(
-                "SELECT channel_name FROM welcome_channels WHERE server_id = ?");
-            st.setString(1, event.getGuild().getId());
+        WelcomeChannelsRecord welcomeChannel = dslContext.selectFrom(Tables.WELCOME_CHANNELS)
+            .where(Tables.WELCOME_CHANNELS.SERVER_ID.eq(event.getGuild().getId()))
+            .fetchOne();
 
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                String channelName = rs.getString("channel_name");
-                event.getGuild().getTextChannelsByName(channelName, true).forEach(channel -> {
-                    channel.sendMessage(event.getMember().getAsMention() + " has joined " + event.getGuild().getName() + "!").queue();
-                });
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (welcomeChannel != null) {
+            String channelName = welcomeChannel.getChannelName();
+            event.getGuild().getTextChannelsByName(channelName, true).forEach(channel -> {
+                channel.sendMessage(event.getMember().getAsMention() + " has joined " + event.getGuild().getName() + "!").queue();
+            });
         }
     }
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        String username = "postgres";
-        String password = "root";
-        String url = "jdbc:postgresql://localhost:5432/ShitBot_db";
+        DSLContext dslContext = ShitBotDatabase.getDSLContext();
 
-        Connection connection;
-        try {
-            connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement st = connection.prepareStatement(
-                "SELECT channel_name FROM welcome_channels WHERE server_id = ?");
-            st.setString(1, event.getGuild().getId());
+        WelcomeChannelsRecord welcomeChannel = dslContext.selectFrom(Tables.WELCOME_CHANNELS)
+            .where(Tables.WELCOME_CHANNELS.SERVER_ID.eq(event.getGuild().getId()))
+            .fetchOne();
 
-            /*ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                String channelName = rs.getString("channel_name");
-                event.getGuild().getTextChannelsByName(channelName, true).forEach(channel -> {
-                    channel.sendMessage(event.getMember().getAsMention() + " has left " + event.getGuild().getName() + "!").queue();
-                });
-            }*/
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                String channelName = rs.getString("channel_name");
-                Guild guild = event.getGuild();
+        if (welcomeChannel != null) {
+            String channelName = welcomeChannel.getChannelName();
+            Guild guild = event.getGuild();
+            Member member = event.getMember();
+
+            if (member != null) {
                 guild.getTextChannelsByName(channelName, true)
-                    .forEach(channel -> channel.sendMessage(
-                            Objects.requireNonNull(event.getMember()).getAsMention() + " has left " + guild.getName() + "!")
-                        .queue());
+                    .forEach(channel ->
+                        channel.sendMessage(member.getAsMention() + " has left " + guild.getName() + "!").queue());
             }
-        } catch (
-            SQLException e) {
-            e.printStackTrace();
         }
+    }
+
+    private static void setWelcomeChannel(SlashCommandInteractionEvent event, DSLContext dslContext) {
+        Guild guild = event.getGuild();
+        assert guild != null;
+
+        TextChannel channel = Objects.requireNonNull(event.getOption("channel")).getAsChannel().asTextChannel();
+
+        WelcomeChannelsRecord welcomeChannel = dslContext.selectFrom(WELCOME_CHANNELS)
+            .where(WELCOME_CHANNELS.SERVER_ID.eq(guild.getId()))
+            .fetchOne();
+
+        if (welcomeChannel != null) {
+            dslContext.update(WELCOME_CHANNELS)
+                .set(WELCOME_CHANNELS.CHANNEL_NAME, channel.getName())
+                .where(WELCOME_CHANNELS.SERVER_ID.eq(guild.getId()))
+                .execute();
+        } else {
+            dslContext.insertInto(WELCOME_CHANNELS)
+                .set(WELCOME_CHANNELS.CHANNEL_NAME, channel.getName())
+                .set(WELCOME_CHANNELS.SERVER_ID, guild.getId())
+                .execute();
+        }
+
+        event.reply("Welcome channel set to " + channel.getAsMention()).setEphemeral(true).queue();
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <jdbc>
+        <driver>org.postgresql.Driver</driver>
+        <url>jdbc:postgresql://localhost:5432/ShitBot_db</url>
+        <user>postgres</user>
+        <password>root</password>
+    </jdbc>
+    <generator>
+        <name>org.jooq.codegen.JavaGenerator</name>
+        <database>
+            <name>org.jooq.meta.postgres.PostgresDatabase</name>
+            <includes>.*</includes>
+            <excludes></excludes>
+            <inputSchema>public</inputSchema>
+        </database>
+        <generate>
+            <daos>true</daos>
+            <interfaces>true</interfaces>
+            <records>true</records>
+            <pojos>true</pojos>
+        </generate>
+        <target>
+            <packageName>org.shithackers.db</packageName>
+            <directory>E:/Users/dimas/source/Java projects/Bots/ShitBot/src/main/java</directory>
+        </target>
+    </generator>
+</configuration>

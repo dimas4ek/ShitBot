@@ -47,9 +47,12 @@ public class RegisterCommands {
             new RewardCommand()
         );
 
-        OptionData reward = new OptionData(OptionType.STRING, "reward", "Reward", true)
+        OptionData rewardCreate = new OptionData(OptionType.STRING, "reward", "Reward", true)
             .addChoice("add role", "role")
-            .addChoice("get access to channel", "channel");
+            .addChoice("add channel access", "channel");
+        OptionData rewardRemove = new OptionData(OptionType.STRING, "reward", "Reward", true)
+            .addChoice("remove role", "role")
+            .addChoice("remove channel access", "channel");
 
         List<OptionData> choices = new ArrayList<>();
         choices.add(new OptionData(OptionType.STRING, "message", "message", true));
@@ -62,13 +65,20 @@ public class RegisterCommands {
             Commands.slash("test", "test"),
 
             Commands.slash("level", "Get your level")
+                .addSubcommandGroups(
+                    new SubcommandGroupData("reward", "Reward")
+                        .addSubcommands(
+                            new SubcommandData("create", "Create a reward for a level")
+                                .addOption(OptionType.STRING, "level", "Level", true)
+                                .addOptions(rewardCreate),
+                            new SubcommandData("list", "Get a list of rewards"),
+                            new SubcommandData("remove", "Remove reward")
+                                .addOptions(rewardRemove)
+                        )
+                )
                 .addSubcommands(
                     new SubcommandData("show", "Show your level"),
-                    new SubcommandData("leaderboard", "Show the level leaderboard"),
-                    new SubcommandData("reward", "Set a reward for a level")
-                        .addOption(OptionType.STRING, "level", "Level", true)
-                        .addOptions(reward),
-                    new SubcommandData("rewards", "Get list of rewards")
+                    new SubcommandData("leaderboard", "Show the level leaderboard")
                 ),
 
             Commands.slash("poll", "Create a poll")
@@ -155,5 +165,6 @@ public class RegisterCommands {
                     new SubcommandData("stop", "Stop the quotes")
                 )
         ).queue();
+
     }
 }
